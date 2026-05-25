@@ -75,12 +75,12 @@ export function ReadinessHeatmap() {
               <div key={d.key}>
                 <div className="mb-1 flex items-center justify-between text-sm">
                   <span className="font-medium text-gray-700">{d.label}</span>
-                  <span className="text-gray-500">{d.avg} / 10</span>
+                  <span className="text-gray-500">{Math.round(d.avg)} / 100</span>
                 </div>
                 <div className="h-3 w-full overflow-hidden rounded-full bg-gray-100">
                   <div
                     className="h-full rounded-full bg-orange-500 transition-all"
-                    style={{ width: `${(d.avg / 10) * 100}%` }}
+                    style={{ width: `${d.avg}%` }}
                   />
                 </div>
               </div>

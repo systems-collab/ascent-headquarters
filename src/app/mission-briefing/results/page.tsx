@@ -6,9 +6,11 @@ import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { hasQuestionnaireData } from "@/lib/questionnaire-storage";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ResultsTeaserPage() {
   const [hasData, setHasData] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,6 +20,20 @@ export default function ResultsTeaserPage() {
     }
     setHasData(true);
   }, [router]);
+
+  async function handleGoogleSignup() {
+    setGoogleError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setGoogleError(error.message);
+    }
+  }
 
   if (!hasData) return null;
 
@@ -35,13 +51,19 @@ export default function ResultsTeaserPage() {
             Sign up to unlock your full diagnostic and access your Command
             Center.
           </p>
+          {googleError && (
+            <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+              {googleError}
+            </p>
+          )}
           <div className="mt-8 space-y-3">
-            <Link
-              href="/signup"
+            <button
+              type="button"
+              onClick={handleGoogleSignup}
               className="block w-full rounded-md bg-fishburners-500 px-4 py-3 text-center font-medium text-white hover:bg-fishburners-600"
             >
               Continue with Google
-            </Link>
+            </button>
             <Link
               href="/signup"
               className="block w-full rounded-md border border-gray-300 px-4 py-3 text-center font-medium text-gray-700 hover:bg-gray-50"

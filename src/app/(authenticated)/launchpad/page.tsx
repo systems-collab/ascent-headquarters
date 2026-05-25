@@ -24,13 +24,13 @@ export default function LaunchpadPage() {
       } = await supabase.auth.getUser();
 
       if (user) {
+        // readiness_scores has UNIQUE(founder_id), so maybeSingle() returns the
+        // row when it exists or null without throwing PGRST116.
         const { data } = await supabase
           .from("readiness_scores")
           .select("*")
           .eq("founder_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
+          .maybeSingle();
 
         if (data) {
           setScores(data as ReadinessScore);

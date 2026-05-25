@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { persistQuestionnaireIfNeeded } from "@/lib/persist-questionnaire";
 import type { Profile, Startup, ReadinessScore } from "@/types/database";
@@ -15,9 +17,12 @@ interface DashboardData {
   scores: ReadinessScore;
 }
 
+type LoadState = "loading" | "ready" | "needs_questionnaire" | "error";
+
 export default function CommandCenterPage() {
+  const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<LoadState>("loading");
 
   useEffect(() => {
     async function load() {
@@ -32,24 +37,15 @@ export default function CommandCenterPage() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) return;
+      if (!user) {
+        router.replace("/login");
+        return;
+      }
 
       const [profileRes, startupRes, scoresRes] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single(),
-        supabase
-          .from("startups")
-          .select("*")
-          .eq("founder_id", user.id)
-          .single(),
-        supabase
-          .from("readiness_scores")
-          .select("*")
-          .eq("founder_id", user.id)
-          .single(),
+        supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+        supabase.from("startups").select("*").eq("founder_id", user.id).maybeSingle(),
+        supabase.from("readiness_scores").select("*").eq("founder_id", user.id).maybeSingle(),
       ]);
 
       if (profileRes.data && startupRes.data && scoresRes.data) {
@@ -58,18 +54,47 @@ export default function CommandCenterPage() {
           startup: startupRes.data as Startup,
           scores: scoresRes.data as ReadinessScore,
         });
+        setState("ready");
+        return;
       }
 
-      setLoading(false);
+      // Authenticated user with a profile but no questionnaire yet
+      // (common for Google OAuth users who skipped Mission Briefing).
+      if (profileRes.data && (!startupRes.data || !scoresRes.data)) {
+        setState("needs_questionnaire");
+        return;
+      }
+
+      setState("error");
     }
 
     load();
-  }, []);
+  }, [router]);
 
-  if (loading) {
+  if (state === "loading") {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-fishburners-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (state === "needs_questionnaire") {
+    return (
+      <div className="mx-auto max-w-lg space-y-4 py-12 text-center">
+        <h1 className="text-2xl font-bold tracking-tight">
+          Complete your Mission Briefing
+        </h1>
+        <p className="text-muted-foreground">
+          We need a few quick answers before we can show your Fundraising
+          Readiness Score and your personalised Command Center.
+        </p>
+        <Link
+          href="/mission-briefing"
+          className="inline-flex items-center justify-center rounded-md bg-fishburners-500 px-6 py-3 text-sm font-medium text-white hover:bg-fishburners-600"
+        >
+          Start Mission Briefing
+        </Link>
       </div>
     );
   }

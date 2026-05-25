@@ -279,3 +279,13 @@ CREATE POLICY "Users can update own responses" ON questionnaire_responses FOR UP
 -- Readiness scores (read-only for clients)
 CREATE POLICY "Users can read own scores" ON readiness_scores FOR SELECT USING (auth.uid() = founder_id);
 CREATE POLICY "Admins can read all scores" ON readiness_scores FOR SELECT USING (is_admin());
+
+-- 10. Explicit EXECUTE grants on RPC functions
+-- -------------------------------------------------------------
+-- SECURITY DEFINER functions still need EXECUTE granted to the role that
+-- calls them. Keep these explicit so the migration is portable across
+-- projects where the default GRANT behaviour may differ.
+
+GRANT EXECUTE ON FUNCTION compute_readiness_score(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_stage_benchmarks(TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION is_admin() TO authenticated;

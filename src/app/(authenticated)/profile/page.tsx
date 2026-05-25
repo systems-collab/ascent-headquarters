@@ -68,15 +68,18 @@ export default function ProfilePage() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       const [profileRes, startupRes] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", user.id).single(),
+        supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
         supabase
           .from("startups")
           .select("*")
           .eq("founder_id", user.id)
-          .single(),
+          .maybeSingle(),
       ]);
 
       const profile = profileRes.data as Profile | null;

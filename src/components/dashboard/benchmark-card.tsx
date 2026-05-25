@@ -16,7 +16,7 @@ interface BenchmarkCardProps {
 }
 
 interface BenchmarkData {
-  avg_score: number;
+  avg_overall: number;
   cohort_size: number;
 }
 
@@ -36,8 +36,9 @@ export function BenchmarkCard({ stage, overallScore }: BenchmarkCardProps) {
         p_stage: stage,
       });
 
-      if (!error && data) {
-        setBenchmark(data);
+      // RPC RETURNS TABLE => client always gets an array (empty when cohort < 10)
+      if (!error && Array.isArray(data) && data.length > 0) {
+        setBenchmark(data[0] as BenchmarkData);
       }
       setLoading(false);
     }
@@ -79,13 +80,13 @@ export function BenchmarkCard({ stage, overallScore }: BenchmarkCardProps) {
             <div>
               <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                 <span>Stage average</span>
-                <span>{Math.round(benchmark.avg_score)}/100</span>
+                <span>{Math.round(benchmark.avg_overall)}/100</span>
               </div>
               <div className="h-3 w-full rounded-full bg-gray-100">
                 <div
                   className="h-3 rounded-full bg-gray-400"
                   style={{
-                    width: `${Math.max(Math.round(benchmark.avg_score), 2)}%`,
+                    width: `${Math.max(Math.round(benchmark.avg_overall), 2)}%`,
                   }}
                 />
               </div>
