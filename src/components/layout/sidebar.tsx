@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import type { UserRole } from "@/types/database";
 
 const NAV_ITEMS = [
   { href: "/command-center", label: "Command Center" },
@@ -10,9 +12,38 @@ const NAV_ITEMS = [
   { href: "/profile", label: "Profile" },
 ];
 
+const ADMIN_NAV_ITEM = { href: "/admin", label: "War Room" };
+
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [role, setRole] = useState<UserRole | null>(null);
+
+  useEffect(() => {
+    async function fetchRole() {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (data) {
+        setRole(data.role as UserRole);
+      }
+    }
+
+    fetchRole();
+  }, []);
+
+  const navItems =
+    role === "admin" ? [...NAV_ITEMS, ADMIN_NAV_ITEM] : NAV_ITEMS;
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -28,7 +59,7 @@ export function Sidebar() {
         </Link>
       </div>
       <nav className="flex-1 space-y-1 px-3">
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
