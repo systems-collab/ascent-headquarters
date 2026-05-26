@@ -1,20 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Surface OAuth callback errors that come back as ?error=<code> in the URL,
+  // e.g. when the auth callback handler bounces a failed code exchange.
+  useEffect(() => {
+    const code = searchParams.get("error");
+    const mapped = getAuthErrorMessage(code);
+    if (mapped) {
+      setError(mapped);
+    }
+  }, [searchParams]);
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +76,10 @@ export default function LoginPage() {
           </p>
 
           {error && (
-            <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+            <div
+              role="alert"
+              className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700"
+            >
               {error}
             </div>
           )}
@@ -151,5 +166,14 @@ export default function LoginPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function LoginPage() {
+  // useSearchParams requires a Suspense boundary in the App Router.
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }
