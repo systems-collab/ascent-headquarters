@@ -40,3 +40,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# logs
+logs/
+*.log
+
+# local agent / scratch
+.claude/cache/
+*.local
+
