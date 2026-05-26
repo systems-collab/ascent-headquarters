@@ -70,7 +70,11 @@ export default function LaunchpadPage() {
             const isLast = index === ASCENT_PHASES.length - 1;
 
             return (
-              <div key={phase.number} className="relative flex gap-4 pb-8 last:pb-0">
+              <div
+                key={phase.number}
+                id={`phase-${phase.number}`}
+                className="relative flex scroll-mt-20 gap-4 pb-8 last:pb-0"
+              >
                 {/* Connecting line */}
                 {!isLast && (
                   <div className="absolute left-5 top-10 h-full w-0.5 bg-fishburners-200" />
