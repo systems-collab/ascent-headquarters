@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { DIMENSION_LABELS } from "@/lib/constants";
+import { useCountUp } from "@/hooks/use-count-up";
 import type { ReadinessScore } from "@/types/database";
 import {
   Card,
@@ -19,6 +20,8 @@ import {
 
 interface ReadinessRadarProps {
   scores: ReadinessScore;
+  /** Animate the overall score from 0 to its final value on mount. */
+  animate?: boolean;
 }
 
 const DIMENSION_KEYS = [
@@ -35,7 +38,10 @@ function getScoreColor(score: number): string {
   return "text-red-500";
 }
 
-export function ReadinessRadar({ scores }: ReadinessRadarProps) {
+export function ReadinessRadar({
+  scores,
+  animate = false,
+}: ReadinessRadarProps) {
   const chartData = DIMENSION_KEYS.map((key) => ({
     dimension: DIMENSION_LABELS[key],
     value: scores[key],
@@ -43,6 +49,7 @@ export function ReadinessRadar({ scores }: ReadinessRadarProps) {
   }));
 
   const overall = Math.round(scores.overall_score);
+  const displayValue = useCountUp({ end: overall, enabled: animate });
 
   return (
     <Card>
@@ -55,7 +62,7 @@ export function ReadinessRadar({ scores }: ReadinessRadarProps) {
             <span
               className={`text-5xl font-bold tabular-nums ${getScoreColor(overall)}`}
             >
-              {overall}
+              {displayValue}
             </span>
             <span className="ml-1 text-lg text-muted-foreground">/100</span>
           </div>
