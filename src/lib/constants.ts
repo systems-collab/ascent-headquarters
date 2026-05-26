@@ -79,3 +79,100 @@ export const DIMENSION_INSIGHTS: Record<string, string> = {
   business_maturity: "Grow your team, validate revenue, and advance your startup stage.",
   market_awareness: "Build your knowledge of the Australian funding landscape and capital types.",
 };
+
+// Concrete next steps surfaced on the Command Center. Three buckets per
+// dimension keyed on score band; the action picker pulls the lowest-banded
+// item from each weak dimension.
+export interface DimensionAction {
+  title: string;
+  description: string;
+  phase: number;
+}
+
+export const DIMENSION_ACTIONS: Record<string, Record<"low" | "medium" | "high", DimensionAction>> = {
+  pitch_readiness: {
+    low: {
+      title: "Draft your first pitch deck",
+      description: "Start with a 10-slide narrative covering problem, solution, market, traction, team, and ask. The Preparation phase walks through each slide.",
+      phase: 2,
+    },
+    medium: {
+      title: "Pressure-test your deck with three founders",
+      description: "Send your current deck to three peers in the Ascent network for feedback before sending it to investors.",
+      phase: 2,
+    },
+    high: {
+      title: "Build your target investor list",
+      description: "List 30 to 50 investors who fit your stage, sector, and geography. Rank by likelihood and warm-intro path.",
+      phase: 4,
+    },
+  },
+  financial_literacy: {
+    low: {
+      title: "Learn cap tables in 60 minutes",
+      description: "Most founders learn this once and refer back for years. Walk through dilution scenarios so you can read any term sheet.",
+      phase: 1,
+    },
+    medium: {
+      title: "Build a 3-statement financial model",
+      description: "If you do not have a real revenue, P&L, and cash-flow model yet, this is the highest leverage thing you can build this month.",
+      phase: 2,
+    },
+    high: {
+      title: "Run your runway scenarios",
+      description: "Model three scenarios: raise now, raise in 6 months, raise in 12 months. Know your zero-cash date in each.",
+      phase: 5,
+    },
+  },
+  funding_strategy: {
+    low: {
+      title: "Map the 19 capital pathways",
+      description: "Most founders default to VC without realising grants, accelerators, revenue-based financing, or angels might fit better. Survey the landscape first.",
+      phase: 3,
+    },
+    medium: {
+      title: "Lock in your target raise amount",
+      description: "Work backwards from your 18-month plan: hires, runway, milestones. The number should fall out of the model, not be picked.",
+      phase: 3,
+    },
+    high: {
+      title: "Prepare your outreach sequence",
+      description: "Templates for first email, follow-up, and warm-intro asks. Build the sequence before you start sending.",
+      phase: 4,
+    },
+  },
+  business_maturity: {
+    low: {
+      title: "Validate one paying customer use case",
+      description: "Investors at every stage care about evidence. One paying customer who can articulate ROI beats ten pilot conversations.",
+      phase: 1,
+    },
+    medium: {
+      title: "Hire your first key role",
+      description: "Identify the single hire that would 10x your output. Use the Preparation phase resources on early-stage hiring and equity.",
+      phase: 2,
+    },
+    high: {
+      title: "Build a board or advisor cadence",
+      description: "Establish a monthly investor update before you start raising. Train the rhythm now so it is automatic later.",
+      phase: 6,
+    },
+  },
+  market_awareness: {
+    low: {
+      title: "Read the AU funding landscape briefing",
+      description: "Australia's capital landscape differs from US playbooks. Understanding local nuances saves you months of mis-targeted outreach.",
+      phase: 1,
+    },
+    medium: {
+      title: "Attend one Sydney founder event this month",
+      description: "Pattern-match by being in the room. Fishburners hosts weekly meetups. Three conversations beat ten cold emails.",
+      phase: 1,
+    },
+    high: {
+      title: "Build relationships before you need them",
+      description: "Start meeting investors 6 to 12 months before your raise. Coffee meetings now compound into term sheets later.",
+      phase: 4,
+    },
+  },
+};

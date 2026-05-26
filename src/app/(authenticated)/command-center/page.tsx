@@ -10,6 +10,7 @@ import { ReadinessRadar } from "@/components/dashboard/readiness-radar";
 import { GapAnalysisCard } from "@/components/dashboard/gap-analysis-card";
 import { ProfileSnapshot } from "@/components/dashboard/profile-snapshot";
 import { BenchmarkCard } from "@/components/dashboard/benchmark-card";
+import { ActionItemsCard } from "@/components/dashboard/action-items-card";
 
 interface DashboardData {
   profile: Profile;
@@ -19,10 +20,33 @@ interface DashboardData {
 
 type LoadState = "loading" | "ready" | "needs_questionnaire" | "error";
 
+// sessionStorage flag so the score reveal animation only fires once per
+// browser session, not on every navigation back to the dashboard.
+const SCORE_SEEN_KEY = "ascent_score_seen";
+
+function shouldAnimateScore(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(SCORE_SEEN_KEY) !== "1";
+  } catch {
+    return false;
+  }
+}
+
+function markScoreSeen(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(SCORE_SEEN_KEY, "1");
+  } catch {
+    // Ignore quota / privacy-mode errors; animation just plays again next time.
+  }
+}
+
 export default function CommandCenterPage() {
   const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
   const [state, setState] = useState<LoadState>("loading");
+  const [animateScore, setAnimateScore] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -54,6 +78,11 @@ export default function CommandCenterPage() {
           startup: startupRes.data as Startup,
           scores: scoresRes.data as ReadinessScore,
         });
+        const shouldAnimate = shouldAnimateScore();
+        if (shouldAnimate) {
+          setAnimateScore(true);
+          markScoreSeen();
+        }
         setState("ready");
         return;
       }
@@ -115,9 +144,14 @@ export default function CommandCenterPage() {
         Welcome back, {firstName}
       </h1>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-        <ReadinessRadar scores={data.scores} />
+      <div className="grid gap-6 md:grid-cols-2">
+        <ReadinessRadar scores={data.scores} animate={animateScore} />
         <GapAnalysisCard scores={data.scores} />
+      </div>
+
+      <ActionItemsCard scores={data.scores} />
+
+      <div className="grid gap-6 md:grid-cols-2">
         <ProfileSnapshot profile={data.profile} startup={data.startup} />
         <BenchmarkCard
           stage={data.startup.stage}
