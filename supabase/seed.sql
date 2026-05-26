@@ -1,0 +1,216 @@
+-- =============================================================
+-- Ascent Headquarters: Seed Data
+-- =============================================================
+--
+-- PREREQUISITE: Before running this seed file, create test users
+-- via the Supabase Dashboard (Authentication > Users > Add User)
+-- or via the Supabase Management API. The handle_new_user()
+-- trigger will auto-create a profiles row for each new auth user.
+--
+-- After creating users, replace the placeholder UUIDs below with
+-- the actual UUIDs assigned by Supabase Auth, then uncomment the
+-- INSERT statements.
+--
+-- Recommended test users to create:
+--   1. admin@ascent.test      (will be promoted to admin below)
+--   2. alice@ascent.test      (idea-stage founder)
+--   3. bob@ascent.test        (pre-seed founder)
+--   4. carol@ascent.test      (seed-stage founder)
+--   5. dave@ascent.test       (series-A founder)
+--   6. eve@ascent.test        (series-B+ founder)
+-- =============================================================
+
+-- Replace these with real UUIDs from auth.users after creating
+-- test accounts in the Supabase Dashboard.
+
+-- DO SET admin_id  = '<uuid-for-admin@ascent.test>';
+-- DO SET alice_id  = '<uuid-for-alice@ascent.test>';
+-- DO SET bob_id    = '<uuid-for-bob@ascent.test>';
+-- DO SET carol_id  = '<uuid-for-carol@ascent.test>';
+-- DO SET dave_id   = '<uuid-for-dave@ascent.test>';
+-- DO SET eve_id    = '<uuid-for-eve@ascent.test>';
+
+-- ---------------------------------------------------------
+-- 1. Promote admin user
+-- ---------------------------------------------------------
+-- UPDATE profiles SET role = 'admin' WHERE id = '<admin_id>';
+
+-- ---------------------------------------------------------
+-- 2. Update profile locations
+-- ---------------------------------------------------------
+-- UPDATE profiles SET location = 'Sydney, NSW' WHERE id = '<admin_id>';
+-- UPDATE profiles SET location = 'Melbourne, VIC' WHERE id = '<alice_id>';
+-- UPDATE profiles SET location = 'Brisbane, QLD' WHERE id = '<bob_id>';
+-- UPDATE profiles SET location = 'Sydney, NSW' WHERE id = '<carol_id>';
+-- UPDATE profiles SET location = 'Perth, WA' WHERE id = '<dave_id>';
+-- UPDATE profiles SET location = 'Adelaide, SA' WHERE id = '<eve_id>';
+
+-- ---------------------------------------------------------
+-- 3. Startups
+-- ---------------------------------------------------------
+
+-- Alice: idea-stage, solo, pre-revenue
+-- INSERT INTO startups (founder_id, name, sector, description, stage, team_size, has_cofounder, monthly_revenue)
+-- VALUES (
+--   '<alice_id>',
+--   'GreenLens',
+--   'cleantech',
+--   'AI-powered sustainability auditing for small businesses',
+--   'idea',
+--   'solo',
+--   false,
+--   'pre_revenue'
+-- );
+
+-- Bob: pre-seed, small team, early revenue
+-- INSERT INTO startups (founder_id, name, sector, description, stage, team_size, has_cofounder, monthly_revenue)
+-- VALUES (
+--   '<bob_id>',
+--   'MedTrack',
+--   'healthtech',
+--   'Patient medication adherence tracking with smart reminders',
+--   'pre_seed',
+--   '2_3',
+--   true,
+--   'under_5k'
+-- );
+
+-- Carol: seed-stage, growing team
+-- INSERT INTO startups (founder_id, name, sector, description, stage, team_size, has_cofounder, monthly_revenue)
+-- VALUES (
+--   '<carol_id>',
+--   'EduFlow',
+--   'edtech',
+--   'Adaptive learning platform for vocational training providers',
+--   'seed',
+--   '4_10',
+--   true,
+--   '5k_20k'
+-- );
+
+-- Dave: series-A, larger team
+-- INSERT INTO startups (founder_id, name, sector, description, stage, team_size, has_cofounder, monthly_revenue)
+-- VALUES (
+--   '<dave_id>',
+--   'PayBridge',
+--   'fintech',
+--   'Cross-border B2B payment rails for AU-APAC trade',
+--   'series_a',
+--   '11_plus',
+--   true,
+--   '20k_100k'
+-- );
+
+-- Eve: series-B+, mature startup
+-- INSERT INTO startups (founder_id, name, sector, description, stage, team_size, has_cofounder, monthly_revenue)
+-- VALUES (
+--   '<eve_id>',
+--   'AgriSense',
+--   'agritech',
+--   'Precision agriculture platform using satellite and IoT data',
+--   'series_b_plus',
+--   '11_plus',
+--   true,
+--   '100k_plus'
+-- );
+
+-- ---------------------------------------------------------
+-- 4. Questionnaire responses
+-- ---------------------------------------------------------
+
+-- Alice: early stage, limited experience
+-- INSERT INTO questionnaire_responses (founder_id, raised_before, amount_raised, funding_types, has_pitch_deck, has_financial_model, understands_cap_tables, identified_investors, au_landscape_rating, target_pathways, biggest_challenge, target_raise)
+-- VALUES (
+--   '<alice_id>',
+--   false,
+--   NULL,
+--   '{}',
+--   'no',
+--   'no',
+--   'not_yet',
+--   'not_yet',
+--   'limited',
+--   ARRAY['grants'],
+--   'dont_know_where_to_start',
+--   'under_100k'
+-- );
+
+-- Bob: some experience, building traction
+-- INSERT INTO questionnaire_responses (founder_id, raised_before, amount_raised, funding_types, has_pitch_deck, has_financial_model, understands_cap_tables, identified_investors, au_landscape_rating, target_pathways, biggest_challenge, target_raise)
+-- VALUES (
+--   '<bob_id>',
+--   true,
+--   'under_50k',
+--   ARRAY['friends_family', 'grants'],
+--   'in_progress',
+--   'no',
+--   'somewhat',
+--   'somewhat',
+--   'moderate',
+--   ARRAY['angel', 'grants'],
+--   'have_deck_no_meetings',
+--   '100k_500k'
+-- );
+
+-- Carol: growing confidence
+-- INSERT INTO questionnaire_responses (founder_id, raised_before, amount_raised, funding_types, has_pitch_deck, has_financial_model, understands_cap_tables, identified_investors, au_landscape_rating, target_pathways, biggest_challenge, target_raise)
+-- VALUES (
+--   '<carol_id>',
+--   true,
+--   '250k_1m',
+--   ARRAY['angel', 'vc', 'grants'],
+--   'yes',
+--   'in_progress',
+--   'somewhat',
+--   'yes',
+--   'moderate',
+--   ARRAY['vc', 'strategic'],
+--   'getting_meetings_not_closing',
+--   '500k_2m'
+-- );
+
+-- Dave: experienced fundraiser
+-- INSERT INTO questionnaire_responses (founder_id, raised_before, amount_raised, funding_types, has_pitch_deck, has_financial_model, understands_cap_tables, identified_investors, au_landscape_rating, target_pathways, biggest_challenge, target_raise)
+-- VALUES (
+--   '<dave_id>',
+--   true,
+--   '1m_5m',
+--   ARRAY['vc', 'angel', 'strategic', 'grants'],
+--   'yes',
+--   'yes',
+--   'confident',
+--   'yes',
+--   'strong',
+--   ARRAY['vc', 'strategic', 'debt'],
+--   'building_investor_relationships',
+--   '2m_10m'
+-- );
+
+-- Eve: very experienced, large raise
+-- INSERT INTO questionnaire_responses (founder_id, raised_before, amount_raised, funding_types, has_pitch_deck, has_financial_model, understands_cap_tables, identified_investors, au_landscape_rating, target_pathways, biggest_challenge, target_raise)
+-- VALUES (
+--   '<eve_id>',
+--   true,
+--   '5m_plus',
+--   ARRAY['vc', 'strategic', 'debt', 'grants'],
+--   'yes',
+--   'yes',
+--   'confident',
+--   'yes',
+--   'strong',
+--   ARRAY['vc', 'strategic', 'ipo'],
+--   'finding_right_capital',
+--   '10m_plus'
+-- );
+
+-- ---------------------------------------------------------
+-- 5. Compute readiness scores for each founder
+-- ---------------------------------------------------------
+-- After uncommenting and running the inserts above, call the
+-- scoring RPC for each founder:
+--
+-- SELECT compute_readiness_score('<alice_id>');
+-- SELECT compute_readiness_score('<bob_id>');
+-- SELECT compute_readiness_score('<carol_id>');
+-- SELECT compute_readiness_score('<dave_id>');
+-- SELECT compute_readiness_score('<eve_id>');
