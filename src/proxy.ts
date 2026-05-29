@@ -4,7 +4,9 @@ import { NextResponse, type NextRequest } from "next/server";
 const PROTECTED_ROUTES = ["/command-center", "/launchpad", "/profile"];
 const ADMIN_ROUTES = ["/admin"];
 
-export async function middleware(request: NextRequest) {
+// Next.js 16 renamed the "middleware" convention to "proxy". Lives at
+// src/proxy.ts (same level as app/) and exports a function named `proxy`.
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
